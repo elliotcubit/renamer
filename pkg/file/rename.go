@@ -28,7 +28,7 @@ func RenameAllFiles(
 	if dry {
 		fmt.Printf("In %q, would:\n", dir)
 	}
-	renamedSomething := false
+	renamedFiles := 0
 
 	tmpl, err := template.New("output").Parse(outputTemplate)
 	if err != nil {
@@ -65,20 +65,21 @@ func RenameAllFiles(
 
 			if dry {
 				fmt.Printf("  Rename %q -> %q\n", path, newFile)
-				renamedSomething = true
+				renamedFiles += 1
 			} else {
 				err := os.Rename(fullPath, newPath)
 				if err != nil {
 					return err
 				}
+				renamedFiles += 1
 			}
 		}
 
 		return nil
 	})
 
-	if !renamedSomething {
-		fmt.Printf("  Do nothing (no files matched?)\n")
+	if dry {
+		fmt.Printf("  Would rename %d files\n", renamedFiles)
 	}
 
 	return err
