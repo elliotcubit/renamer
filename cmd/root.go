@@ -19,7 +19,7 @@ const (
 
 func init() {
 	rootCmd.PersistentFlags().StringP(PatternFlagName, "p", "", "Pattern of files to pick up")
-	rootCmd.PersistentFlags().StringP(DirFlagName, "d", "", "Directory to check")
+	rootCmd.PersistentFlags().StringP(DirFlagName, "d", ".", "Directory to check")
 	rootCmd.PersistentFlags().Bool(DryRunFlagName, false, "Do not modify any files; instead, print what would be done")
 	rootCmd.PersistentFlags().StringP(OutputFlagName, "o", "{{ .ShowName }} s{{ .Season }}e{{ .Episode }} - {{ .Title }}", "The template to rename files to, not including any file extension")
 

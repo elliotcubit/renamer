@@ -13,7 +13,7 @@ Usage:
   renamer [flags]
 
 Flags:
-  -d, --dir string               Directory to check
+  -d, --dir string               Directory to check (default ".")
       --dry-run                  Do not modify any files; instead, print what would be done
   -h, --help                     help for renamer
       --name string              The name of the show
