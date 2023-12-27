@@ -22,7 +22,6 @@ func init() {
 	rootCmd.PersistentFlags().StringP(DirFlagName, "d", "", "Directory to check")
 	rootCmd.PersistentFlags().Bool(DryRunFlagName, false, "Do not modify any files; instead, print what would be done")
 	rootCmd.PersistentFlags().StringP(OutputFlagName, "o", "{{ .ShowName }} s{{ .Season }}e{{ .Episode }} - {{ .Title }}", "The template to rename files to, not including any file extension")
-	cobra.MarkFlagRequired(rootCmd.PersistentFlags(), PatternFlagName)
 
 	for k, v := range defaultArgs {
 		rootCmd.PersistentFlags().String(k, "", v)
@@ -44,15 +43,31 @@ var rootCmd = &cobra.Command{
 				defaults[k] = v
 			}
 		}
-		pattern, err := regexps.CompileWithDefaults[file.Match](cmd.Flag(PatternFlagName).Value.String(), defaults)
-		if err != nil {
-			fmt.Printf("bad pattern: %v\n", err)
-			os.Exit(1)
-		}
+
+		var pattern *regexps.Regexp[file.Match]
+		var err error
+		rawPattern := cmd.Flag(PatternFlagName).Value.String()
 
 		dir := cmd.Flag(DirFlagName).Value.String()
-
 		fs := os.DirFS(dir)
+
+		if rawPattern != "" {
+			pattern, err = regexps.CompileWithDefaults[file.Match](cmd.Flag(PatternFlagName).Value.String(), defaults)
+			if err != nil {
+				fmt.Printf("bad pattern: %v\n", err)
+				os.Exit(1)
+			}
+		} else {
+			pattern, err = file.InferPattern(
+				fs,
+				dir,
+			)
+			if err != nil {
+				fmt.Printf("no --pattern; %v\n", err)
+				os.Exit(1)
+			}
+		}
+
 		err = file.RenameAllFiles(
 			fs,
 			dir,

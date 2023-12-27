@@ -24,6 +24,10 @@ Flags:
 
 The `--pattern` is a regular expression using named capture groups with the keys `episode`, `season`, `name` and `title`.
 
+If _all_ files in the target directory match one of the included patterns (and _the same_ pattern), that
+pattern can be used without providing the `--pattern` argument. There are a few detectable file patterns,
+which will hopefully be expanded later.
+
 The `--output-pattern` is a go template using those variables.
 
 The `name` and `season` can be fixed by arugments, in which case they are not required in the input `--pattern`.
